@@ -1,0 +1,150 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://jsonschemaprofiles.dev/schemas/gemini_2_0_202602.yaml"
+title: "Gemini 2.0 Structured Output Profile (baseline 202602)"
+description: >
+  Meta-schema for JSON Schemas intended for Gemini 2.0 structured output.
+  This profile extends the Gemini 202602 profile with a strict requirement
+  that object schemas include propertyOrdering.
+$comment: >
+  Gemini docs note that Gemini 2.0 and earlier requires propertyOrdering for
+  desired output order. This profile encodes that as a strict object-schema
+  requirement for safer compatibility.
+
+$ref: "#/$defs/gemini20Schema"
+
+$defs:
+  primitiveValue:
+    type:
+      - string
+      - number
+      - integer
+      - boolean
+      - "null"
+
+  baseType:
+    enum:
+      - string
+      - integer
+      - number
+      - boolean
+      - array
+      - object
+      - "null"
+
+  typeOrNullable:
+    anyOf:
+      - $ref: "#/$defs/baseType"
+      - type: array
+        minItems: 2
+        maxItems: 2
+        uniqueItems: true
+        items:
+          enum:
+            - string
+            - integer
+            - number
+            - boolean
+            - array
+            - object
+            - "null"
+        contains:
+          const: "null"
+
+  requiredList:
+    type: array
+    uniqueItems: true
+    items:
+      type: string
+
+  propertyMap:
+    type: object
+    additionalProperties:
+      $ref: "#/$defs/gemini20Schema"
+
+  additionalPropertiesValue:
+    anyOf:
+      - type: boolean
+      - $ref: "#/$defs/gemini20Schema"
+
+  gemini20Schema:
+    type: object
+    additionalProperties: false
+    required:
+      - type
+    properties:
+      type:
+        $ref: "#/$defs/typeOrNullable"
+      title:
+        type: string
+      description:
+        type: string
+      enum:
+        type: array
+        minItems: 1
+        items:
+          $ref: "#/$defs/primitiveValue"
+      format:
+        enum:
+          - date-time
+          - date
+          - time
+      minimum:
+        type: number
+      maximum:
+        type: number
+      properties:
+        $ref: "#/$defs/propertyMap"
+      required:
+        $ref: "#/$defs/requiredList"
+      propertyOrdering:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+      additionalProperties:
+        $ref: "#/$defs/additionalPropertiesValue"
+      items:
+        $ref: "#/$defs/gemini20Schema"
+      prefixItems:
+        type: array
+        items:
+          $ref: "#/$defs/gemini20Schema"
+      minItems:
+        type: integer
+        minimum: 0
+      maxItems:
+        type: integer
+        minimum: 0
+    dependentRequired:
+      required:
+        - properties
+    allOf:
+      - if:
+          properties:
+            type:
+              anyOf:
+                - const: object
+                - type: array
+                  contains:
+                    const: object
+          required:
+            - type
+        then:
+          required:
+            - propertyOrdering
+      - if:
+          properties:
+            type:
+              anyOf:
+                - const: array
+                - type: array
+                  contains:
+                    const: array
+          required:
+            - type
+        then:
+          anyOf:
+            - required:
+                - items
+            - required:
+                - prefixItems

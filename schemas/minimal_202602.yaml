@@ -1,0 +1,149 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://jsonschemaprofiles.dev/schemas/minimal_202602.yaml"
+title: "Minimal Gemini/OpenAI Common Profile (baseline 202602)"
+description: >
+  Lowest common denominator profile across the documented Gemini and OpenAI
+  structured-output JSON Schema subsets.
+$comment: >
+  This profile is intentionally strict to maximize cross-provider compatibility.
+  It applies OpenAI's root-object and additionalProperties=false object pattern,
+  while limiting keywords to the intersection clearly documented by both vendors.
+
+type: object
+additionalProperties: false
+required:
+  - type
+  - properties
+  - required
+  - additionalProperties
+properties:
+  type:
+    const: object
+  title:
+    type: string
+  description:
+    type: string
+  properties:
+    $ref: "#/$defs/propertyMap"
+  required:
+    $ref: "#/$defs/requiredList"
+  additionalProperties:
+    const: false
+
+$defs:
+  primitiveValue:
+    type:
+      - string
+      - number
+      - integer
+      - boolean
+      - "null"
+
+  nonNullType:
+    enum:
+      - string
+      - number
+      - integer
+      - boolean
+      - object
+      - array
+
+  typeOrNullable:
+    anyOf:
+      - $ref: "#/$defs/nonNullType"
+      - type: array
+        minItems: 2
+        maxItems: 2
+        uniqueItems: true
+        items:
+          enum:
+            - string
+            - number
+            - integer
+            - boolean
+            - object
+            - array
+            - "null"
+        contains:
+          const: "null"
+
+  requiredList:
+    type: array
+    uniqueItems: true
+    items:
+      type: string
+
+  propertyMap:
+    type: object
+    additionalProperties:
+      $ref: "#/$defs/minimalSchema"
+
+  minimalSchema:
+    type: object
+    additionalProperties: false
+    properties:
+      type:
+        $ref: "#/$defs/typeOrNullable"
+      title:
+        type: string
+      description:
+        type: string
+      enum:
+        type: array
+        minItems: 1
+        items:
+          $ref: "#/$defs/primitiveValue"
+      format:
+        enum:
+          - date-time
+          - date
+          - time
+      minimum:
+        type: number
+      maximum:
+        type: number
+      properties:
+        $ref: "#/$defs/propertyMap"
+      required:
+        $ref: "#/$defs/requiredList"
+      additionalProperties:
+        const: false
+      items:
+        $ref: "#/$defs/minimalSchema"
+      minItems:
+        type: integer
+        minimum: 0
+      maxItems:
+        type: integer
+        minimum: 0
+    required:
+      - type
+    allOf:
+      - if:
+          properties:
+            type:
+              anyOf:
+                - const: object
+                - type: array
+                  contains:
+                    const: object
+          required:
+            - type
+        then:
+          required:
+            - properties
+            - required
+            - additionalProperties
+      - if:
+          properties:
+            type:
+              anyOf:
+                - const: array
+                - type: array
+                  contains:
+                    const: array
+          required:
+            - type
+        then:
+          required:
+            - items
