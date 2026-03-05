@@ -55,7 +55,7 @@ func validatePhase2OpenAI(candidateMap map[string]interface{}, rawBytes []byte, 
 	ctx.traverseSchema(candidateMap, "", 0)
 
 	// Check nested object discipline
-	checkOpenAINestedObjectDiscipline(candidateMap, "", report, ctx)
+	checkOpenAINestedObjectDiscipline(candidateMap, "", report, ctx, make(map[string]bool))
 
 	// Check limits
 	if ctx.metrics.TotalProperties > openAIMaxProperties {
@@ -201,19 +201,29 @@ func checkOpenAIObjectDiscipline(obj map[string]interface{}, path string, report
 }
 
 // checkOpenAINestedObjectDiscipline walks nested object schemas and checks discipline.
-func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Report, ctx *traverseContext) {
+func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Report, ctx *traverseContext, visitedRefs map[string]bool) {
 	obj, ok := node.(map[string]interface{})
 	if !ok {
 		return
 	}
 
-	// Handle $ref - resolve and check
+	// Handle $ref - resolve and check with cycle detection
 	if ref, ok := obj["$ref"]; ok {
 		if refStr, ok := ref.(string); ok {
+			if visitedRefs[refStr] {
+				return
+			}
+			visitedRefs[refStr] = true
 			resolved := resolveRef(refStr, ctx.defs)
 			if resolved != nil {
-				checkOpenAINestedObjectDisciplineResolved(resolved, path, report, ctx)
+				if resolvedObj, ok := resolved.(map[string]interface{}); ok {
+					if isObjectType(resolved) {
+						checkOpenAIObjectDiscipline(resolvedObj, path, report)
+					}
+					checkOpenAINestedObjectDiscipline(resolved, path, report, ctx, visitedRefs)
+				}
 			}
+			delete(visitedRefs, refStr)
 			return
 		}
 	}
@@ -227,7 +237,7 @@ func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Re
 					if isObjectType(propSchema) {
 						checkOpenAIObjectDiscipline(propObj, propPath, report)
 					}
-					checkOpenAINestedObjectDiscipline(propSchema, propPath, report, ctx)
+					checkOpenAINestedObjectDiscipline(propSchema, propPath, report, ctx, visitedRefs)
 				}
 			}
 		}
@@ -235,7 +245,12 @@ func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Re
 
 	// Check items
 	if items, ok := obj["items"]; ok {
-		checkOpenAINestedObjectDisciplineItem(items, path+"/items", report, ctx)
+		if itemObj, ok := items.(map[string]interface{}); ok {
+			if isObjectType(items) {
+				checkOpenAIObjectDiscipline(itemObj, path+"/items", report)
+			}
+			checkOpenAINestedObjectDiscipline(items, path+"/items", report, ctx, visitedRefs)
+		}
 	}
 
 	// Check anyOf
@@ -243,7 +258,12 @@ func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Re
 		if arr, ok := anyOf.([]interface{}); ok {
 			for i, item := range arr {
 				itemPath := fmt.Sprintf("%s/anyOf/%d", path, i)
-				checkOpenAINestedObjectDisciplineItem(item, itemPath, report, ctx)
+				if itemObj, ok := item.(map[string]interface{}); ok {
+					if isObjectType(item) {
+						checkOpenAIObjectDiscipline(itemObj, itemPath, report)
+					}
+					checkOpenAINestedObjectDiscipline(item, itemPath, report, ctx, visitedRefs)
+				}
 			}
 		}
 	}
@@ -253,27 +273,14 @@ func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Re
 		if defsMap, ok := defs.(map[string]interface{}); ok {
 			for name, defSchema := range defsMap {
 				defPath := path + "/$defs/" + name
-				checkOpenAINestedObjectDisciplineItem(defSchema, defPath, report, ctx)
+				if defObj, ok := defSchema.(map[string]interface{}); ok {
+					if isObjectType(defSchema) {
+						checkOpenAIObjectDiscipline(defObj, defPath, report)
+					}
+					checkOpenAINestedObjectDiscipline(defSchema, defPath, report, ctx, visitedRefs)
+				}
 			}
 		}
-	}
-}
-
-func checkOpenAINestedObjectDisciplineItem(node interface{}, path string, report *Report, ctx *traverseContext) {
-	if obj, ok := node.(map[string]interface{}); ok {
-		if isObjectType(node) {
-			checkOpenAIObjectDiscipline(obj, path, report)
-		}
-		checkOpenAINestedObjectDiscipline(node, path, report, ctx)
-	}
-}
-
-func checkOpenAINestedObjectDisciplineResolved(node interface{}, path string, report *Report, ctx *traverseContext) {
-	if obj, ok := node.(map[string]interface{}); ok {
-		if isObjectType(node) {
-			checkOpenAIObjectDiscipline(obj, path, report)
-		}
-		checkOpenAINestedObjectDiscipline(node, path, report, ctx)
 	}
 }
 

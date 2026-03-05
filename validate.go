@@ -6,8 +6,13 @@ import (
 	"strings"
 
 	jschema "github.com/santhosh-tekuri/jsonschema/v6"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 	"gopkg.in/yaml.v3"
 )
+
+// printer is used by the jsonschema library to format error messages.
+var printer = message.NewPrinter(language.English)
 
 // ValidateOptions configures validation behavior.
 type ValidateOptions struct {
@@ -123,10 +128,7 @@ func addValidationErrors(ve *jschema.ValidationError, report *Report, parentPath
 	}
 
 	if len(ve.Causes) == 0 {
-		msg := ve.ErrorKind.LocalizedString(nil)
-		if msg == "" {
-			msg = fmt.Sprintf("%v", ve.ErrorKind)
-		}
+		msg := ve.ErrorKind.LocalizedString(printer)
 		report.AddFinding(Finding{
 			Severity: SeverityError,
 			Code:     "META_SCHEMA_VALIDATION",
