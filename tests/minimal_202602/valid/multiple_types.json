@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "active": { "type": "boolean" },
+    "count": { "type": "integer" }
+  },
+  "required": ["name", "score", "active", "count"],
+  "additionalProperties": false
+}

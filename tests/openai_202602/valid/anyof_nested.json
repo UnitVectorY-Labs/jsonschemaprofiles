@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "properties": {
+    "value": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "integer" }
+      ]
+    }
+  },
+  "required": ["value"],
+  "additionalProperties": false
+}

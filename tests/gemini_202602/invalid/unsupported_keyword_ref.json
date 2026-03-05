@@ -1,0 +1,7 @@
+{
+  "type": "object",
+  "properties": {
+    "item": { "$ref": "#/$defs/thing" }
+  },
+  "required": ["item"]
+}

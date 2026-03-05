@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "value": {
+      "type": "string",
+      "if": { "const": "a" },
+      "then": { "const": "b" }
+    }
+  },
+  "required": ["value"],
+  "additionalProperties": false
+}

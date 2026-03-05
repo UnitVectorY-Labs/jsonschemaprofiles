@@ -1,0 +1,7 @@
+{
+  "type": "object",
+  "properties": {
+    "email_addr": { "type": "string", "format": "email" }
+  },
+  "required": ["email_addr"]
+}

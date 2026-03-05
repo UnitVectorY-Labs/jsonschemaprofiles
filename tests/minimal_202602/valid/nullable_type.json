@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "properties": {
+    "note": { "type": ["string", "null"] }
+  },
+  "required": ["note"],
+  "additionalProperties": false
+}
