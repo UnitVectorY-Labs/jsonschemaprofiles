@@ -70,18 +70,6 @@ jsonschemaprofiles coerce schema --profile OPENAI_202602 --in schema.json --out 
 | `GEMINI_202503` | Gemini 2.0 with required `propertyOrdering` |
 | `MINIMAL_202602` | Lowest common denominator across providers |
 
-## Documentation
-
-Full documentation is available at [jsonschemaprofiles.dev](https://jsonschemaprofiles.dev):
-
-- [Installation](https://jsonschemaprofiles.dev/install)
-- [Usage](https://jsonschemaprofiles.dev/usage)
-- [Library API](https://jsonschemaprofiles.dev/library)
-- [Examples](https://jsonschemaprofiles.dev/examples)
-- [Schemas & Profiles](https://jsonschemaprofiles.dev/schemas)
-- [OpenAI Profile Details](https://jsonschemaprofiles.dev/openai)
-- [Gemini Profile Details](https://jsonschemaprofiles.dev/gemini)
-
 ## License
 
 See [LICENSE](LICENSE) for details.
