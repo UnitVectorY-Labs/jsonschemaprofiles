@@ -1,4 +1,4 @@
-package jsonschemaprofiles
+package engine
 
 import (
 	"fmt"

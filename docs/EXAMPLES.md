@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Examples
-nav_order: 5
+nav_order: 6
 permalink: /examples
 ---
 
@@ -143,67 +143,4 @@ Schema is NOT VALID
 
 ```bash
 $ jsonschemaprofiles coerce schema --profile MINIMAL_202602 --in schema.json --out portable.json
-```
-
----
-
-## Go Library Usage
-
-### Validate a Schema
-
-```go
-package main
-
-import (
-    "fmt"
-    "log"
-
-    jsp "github.com/UnitVectorY-Labs/jsonschemaprofiles"
-)
-
-func main() {
-    schema := []byte(`{
-        "type": "object",
-        "properties": {
-            "name": { "type": "string" }
-        },
-        "required": ["name"],
-        "additionalProperties": false
-    }`)
-
-    report, err := jsp.ValidateSchema(jsp.OPENAI_202602, schema, nil)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    fmt.Print(report.Text())
-    // Output: Schema is VALID
-    //   No findings.
-}
-```
-
-### Coerce a Schema
-
-```go
-coerced, report, changed, err := jsp.CoerceSchema(jsp.OPENAI_202602, inputSchema, &jsp.CoerceOptions{
-    Mode: jsp.CoerceModeConservative,
-})
-if err != nil {
-    log.Fatal(err)
-}
-if changed {
-    fmt.Println("Schema was modified:")
-    fmt.Println(string(coerced))
-}
-for _, f := range report.Findings {
-    fmt.Printf("[%s] %s: %s\n", f.Severity, f.Code, f.Message)
-}
-```
-
-### List Profiles Programmatically
-
-```go
-for _, p := range jsp.ListProfiles() {
-    fmt.Printf("%-25s %s (baseline %s)\n", p.ID, p.Title, p.Baseline)
-}
 ```

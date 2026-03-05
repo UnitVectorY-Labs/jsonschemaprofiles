@@ -76,6 +76,7 @@ Full documentation is available at [jsonschemaprofiles.dev](https://jsonschemapr
 
 - [Installation](https://jsonschemaprofiles.dev/install)
 - [Usage](https://jsonschemaprofiles.dev/usage)
+- [Library API](https://jsonschemaprofiles.dev/library)
 - [Examples](https://jsonschemaprofiles.dev/examples)
 - [Schemas & Profiles](https://jsonschemaprofiles.dev/schemas)
 - [OpenAI Profile Details](https://jsonschemaprofiles.dev/openai)

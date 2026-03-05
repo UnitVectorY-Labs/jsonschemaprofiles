@@ -1,4 +1,4 @@
-package jsonschemaprofiles
+package engine
 
 import (
 	"fmt"
@@ -106,7 +106,7 @@ func validatePhase2OpenAI(candidateMap map[string]interface{}, rawBytes []byte, 
 	}
 
 	// Fine-tuned model checks
-	if opts != nil && opts.ModelTarget == "fine-tuned" {
+	if opts != nil && opts.ModelTarget == modelTargetFineTuned {
 		checkOpenAIFineTunedKeywords(candidateMap, "", report)
 	}
 }
