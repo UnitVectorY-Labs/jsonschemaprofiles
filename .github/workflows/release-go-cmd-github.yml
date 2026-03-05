@@ -1,4 +1,4 @@
-# .github/workflows/release.yaml
+# .github/workflows/release-go-cmd-github.yml
 
 name: Build and Release Go App
 on:
@@ -13,6 +13,8 @@ jobs:
     name: Release Go Binary
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      APP_NAME: ${{ github.event.repository.name }}
 
     permissions:
       contents: write
@@ -43,8 +45,8 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
-        project_path: "./"
-        binary_name: ${{ github.event.repository.name }}
+        project_path: "./cmd/${{ env.APP_NAME }}"
+        binary_name: ${{ env.APP_NAME }}
         ldflags: "-X 'main.Version=${{ github.ref_name }}'"
         md5sum: true
         sha256sum: true
@@ -54,5 +56,5 @@ jobs:
       with:
         subject-path: |
           "${{ steps.go_release.outputs.release_asset_dir }}/*"
-          "${{ github.event.repository.name }}-${{ github.ref_name }}-*.tar.gz"
-          "${{ github.event.repository.name }}-${{ github.ref_name }}-*.zip"
+          "${{ env.APP_NAME }}-${{ github.ref_name }}-*.tar.gz"
+          "${{ env.APP_NAME }}-${{ github.ref_name }}-*.zip"
