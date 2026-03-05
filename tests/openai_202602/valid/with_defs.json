@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "primary": { "$ref": "#/$defs/color" },
+    "secondary": { "$ref": "#/$defs/color" }
+  },
+  "required": ["primary", "secondary"],
+  "additionalProperties": false,
+  "$defs": {
+    "color": {
+      "type": "string",
+      "enum": ["red", "green", "blue"]
+    }
+  }
+}

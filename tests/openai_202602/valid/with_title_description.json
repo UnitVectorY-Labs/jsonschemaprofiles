@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "title": "Person",
+  "description": "A person schema",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name",
+      "description": "The person's name"
+    }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

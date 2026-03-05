@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "level1": {
+      "type": "object",
+      "properties": {
+        "level2": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "string" }
+          },
+          "required": ["value"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["level2"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["level1"],
+  "additionalProperties": false
+}

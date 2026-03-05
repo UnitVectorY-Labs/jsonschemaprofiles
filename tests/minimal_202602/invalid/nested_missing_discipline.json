@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "addr": {
+      "type": "object",
+      "properties": {
+        "city": { "type": "string" }
+      },
+      "required": ["city"]
+    }
+  },
+  "required": ["addr"],
+  "additionalProperties": false
+}

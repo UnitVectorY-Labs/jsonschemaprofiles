@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "email": { "type": "string", "format": "email" },
+    "code": { "type": "string", "pattern": "^[A-Z]{3}$" }
+  },
+  "required": ["email", "code"],
+  "additionalProperties": false
+}
