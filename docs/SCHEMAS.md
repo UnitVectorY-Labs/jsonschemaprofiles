@@ -33,7 +33,7 @@ Use these enum-like identifiers in code when selecting requirement sets:
 
 - `OPENAI_202602`
 - `GEMINI_202602`
-- `GEMINI_2_0_202602`
+- `GEMINI_202503` - older version for Gemini 2.0 models
 - `MINIMAL_202602`
 
 ## Available Profiles And Restrictions
@@ -41,7 +41,7 @@ Use these enum-like identifiers in code when selecting requirement sets:
 - Gemini restrictions are documented as model/API behavior and are not split by SDK language.
 - [openai_202602.yaml](https://github.com/UnitVectorY-Labs/jsonschemaprofiles/blob/main/schemas/openai_202602.yaml): OpenAI Structured Outputs subset. Enforces root object style and keyword subset. Additional runtime checks are still required for depth/property/string/enum limits.
 - [gemini_202602.yaml](https://github.com/UnitVectorY-Labs/jsonschemaprofiles/blob/main/schemas/gemini_202602.yaml): Gemini JSON Schema subset from the documented support table.
-- [gemini_2_0_202602.yaml](https://github.com/UnitVectorY-Labs/jsonschemaprofiles/blob/main/schemas/gemini_2_0_202602.yaml): Gemini 2.0-focused profile. Same subset as `gemini_202602` plus required `propertyOrdering` for object schemas.
+- [gemini_202503.yaml](https://github.com/UnitVectorY-Labs/jsonschemaprofiles/blob/main/schemas/gemini_202503.yaml): Gemini 2.0-focused profile. Same subset as `gemini_202602` plus required `propertyOrdering` for object schemas.
 - [minimal_202602.yaml](https://github.com/UnitVectorY-Labs/jsonschemaprofiles/blob/main/schemas/minimal_202602.yaml): Lowest common denominator across OpenAI and Gemini. This is the most portable profile.
 
 ## Provider Requirement Pages

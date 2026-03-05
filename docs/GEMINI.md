@@ -54,12 +54,12 @@ This page captures the JSON Schema subset documented by Google for Gemini struct
 ## Profile Files
 
 - [gemini_202602.yaml](../schemas/gemini_202602.yaml): baseline Gemini documented subset.
-- [gemini_2_0_202602.yaml](../schemas/gemini_2_0_202602.yaml): stricter Gemini 2.0 profile that requires `propertyOrdering` on object schemas.
+- [gemini_202503.yaml](../schemas/gemini_202503.yaml): stricter Gemini 2.0 profile that requires `propertyOrdering` on object schemas.
 
 ## Requirement Reference Enums
 
 - `GEMINI_202602`
-- `GEMINI_2_0_202602`
+- `GEMINI_202503` - older version for Gemini 2.0 models
 
 ## Notes
 
@@ -75,4 +75,4 @@ Even when a schema passes [gemini_202602.yaml](../schemas/gemini_202602.yaml), a
 - Validate semantic consistency between `required` and `properties` (every required field is declared as a property).
 - Apply model-target checks at runtime because support details can differ by model generation even within the documented keyword subset.
 
-For Gemini 2.0 targets, prefer validating against [gemini_2_0_202602.yaml](../schemas/gemini_2_0_202602.yaml) first, then run model-target checks in code.
+For Gemini 2.0 targets, prefer validating against [gemini_202503.yaml](../schemas/gemini_202503.yaml) first, then run model-target checks in code.

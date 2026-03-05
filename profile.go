@@ -12,10 +12,10 @@ var schemaFS embed.FS
 type ProfileID string
 
 const (
-	OPENAI_202602     ProfileID = "OPENAI_202602"
-	GEMINI_202602     ProfileID = "GEMINI_202602"
-	GEMINI_2_0_202602 ProfileID = "GEMINI_2_0_202602"
-	MINIMAL_202602    ProfileID = "MINIMAL_202602"
+	OPENAI_202602  ProfileID = "OPENAI_202602"
+	GEMINI_202602  ProfileID = "GEMINI_202602"
+	GEMINI_202503  ProfileID = "GEMINI_202503"
+	MINIMAL_202602 ProfileID = "MINIMAL_202602"
 )
 
 // ProfileInfo describes a profile.
@@ -42,12 +42,12 @@ var profiles = map[ProfileID]ProfileInfo{
 		Baseline:    "202602",
 		SchemaFile:  "schemas/gemini_202602.yaml",
 	},
-	GEMINI_2_0_202602: {
-		ID:          GEMINI_2_0_202602,
+	GEMINI_202503: {
+		ID:          GEMINI_202503,
 		Title:       "Gemini 2.0 Structured Output Profile",
 		Description: "Meta-schema for JSON Schemas intended for Gemini 2.0 structured output with required propertyOrdering",
 		Baseline:    "202602",
-		SchemaFile:  "schemas/gemini_2_0_202602.yaml",
+		SchemaFile:  "schemas/gemini_202503.yaml",
 	},
 	MINIMAL_202602: {
 		ID:          MINIMAL_202602,
@@ -62,7 +62,7 @@ var profiles = map[ProfileID]ProfileInfo{
 func ListProfiles() []ProfileInfo {
 	out := make([]ProfileInfo, 0, len(profiles))
 	// Stable order
-	for _, id := range []ProfileID{OPENAI_202602, GEMINI_202602, GEMINI_2_0_202602, MINIMAL_202602} {
+	for _, id := range []ProfileID{OPENAI_202602, GEMINI_202602, GEMINI_202503, MINIMAL_202602} {
 		out = append(out, profiles[id])
 	}
 	return out

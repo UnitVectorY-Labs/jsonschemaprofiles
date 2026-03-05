@@ -11,7 +11,7 @@ func TestListProfiles(t *testing.T) {
 	}
 
 	// Verify order
-	expectedIDs := []ProfileID{OPENAI_202602, GEMINI_202602, GEMINI_2_0_202602, MINIMAL_202602}
+	expectedIDs := []ProfileID{OPENAI_202602, GEMINI_202602, GEMINI_202503, MINIMAL_202602}
 	for i, p := range profiles {
 		if p.ID != expectedIDs[i] {
 			t.Errorf("expected profile %d to be %s, got %s", i, expectedIDs[i], p.ID)
@@ -40,7 +40,7 @@ func TestGetProfileInfoUnknown(t *testing.T) {
 }
 
 func TestGetProfileSchema(t *testing.T) {
-	for _, id := range []ProfileID{OPENAI_202602, GEMINI_202602, GEMINI_2_0_202602, MINIMAL_202602} {
+	for _, id := range []ProfileID{OPENAI_202602, GEMINI_202602, GEMINI_202503, MINIMAL_202602} {
 		data, err := GetProfileSchema(id)
 		if err != nil {
 			t.Errorf("GetProfileSchema(%s) error: %v", id, err)

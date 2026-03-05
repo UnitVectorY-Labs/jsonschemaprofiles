@@ -1,5 +1,5 @@
 $schema: "https://json-schema.org/draft/2020-12/schema"
-$id: "https://jsonschemaprofiles.dev/schemas/minimal_202602.yaml"
+$id: "https://jsonschemaprofiles.unitvectorylabs.com/schemas/minimal_202602.yaml"
 title: "Minimal Gemini/OpenAI Common Profile (baseline 202602)"
 description: >
   Lowest common denominator profile across the documented Gemini and OpenAI

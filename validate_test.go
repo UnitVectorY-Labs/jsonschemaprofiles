@@ -12,10 +12,10 @@ var testFS embed.FS
 
 // profileDirMap maps directory names to ProfileIDs
 var profileDirMap = map[string]ProfileID{
-	"openai_202602":     OPENAI_202602,
-	"gemini_202602":     GEMINI_202602,
-	"gemini_2_0_202602": GEMINI_2_0_202602,
-	"minimal_202602":    MINIMAL_202602,
+	"openai_202602":  OPENAI_202602,
+	"gemini_202602":  GEMINI_202602,
+	"gemini_202503":  GEMINI_202503,
+	"minimal_202602": MINIMAL_202602,
 }
 
 func TestValidSchemas(t *testing.T) {

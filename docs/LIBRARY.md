@@ -117,7 +117,7 @@ Profile identifiers:
 
 - `OPENAI_202602`
 - `GEMINI_202602`
-- `GEMINI_2_0_202602`
+- `GEMINI_202503`
 - `MINIMAL_202602`
 
 #### `type ProfileInfo struct`

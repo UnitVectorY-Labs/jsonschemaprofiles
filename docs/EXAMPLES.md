@@ -93,7 +93,7 @@ The coerced `fixed.json`:
 ### Validate Against Gemini 2.0
 
 ```bash
-$ jsonschemaprofiles validate schema --profile GEMINI_2_0_202602 --in schema.json
+$ jsonschemaprofiles validate schema --profile GEMINI_202503 --in schema.json
 Schema is NOT VALID
   [ERROR] GEMINI_2_0_MISSING_PROPERTY_ORDERING: Object schema must include propertyOrdering for Gemini 2.0 compatibility
 ```
@@ -101,7 +101,7 @@ Schema is NOT VALID
 ### Coerce for Gemini 2.0
 
 ```bash
-$ jsonschemaprofiles coerce schema --profile GEMINI_2_0_202602 --in schema.json
+$ jsonschemaprofiles coerce schema --profile GEMINI_202503 --in schema.json
 {
   "properties": {
     "rating": { "maximum": 5, "minimum": 0, "type": "number" },

@@ -1,5 +1,5 @@
 $schema: "https://json-schema.org/draft/2020-12/schema"
-$id: "https://jsonschemaprofiles.dev/schemas/gemini_2_0_202602.yaml"
+$id: "https://jsonschemaprofiles.unitvectorylabs.com/schemas/gemini_202503.yaml"
 title: "Gemini 2.0 Structured Output Profile (baseline 202602)"
 description: >
   Meta-schema for JSON Schemas intended for Gemini 2.0 structured output.

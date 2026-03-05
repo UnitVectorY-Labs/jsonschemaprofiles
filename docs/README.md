@@ -31,7 +31,7 @@ LLM providers that support structured JSON output (OpenAI Structured Outputs, Ge
 |---|---|
 | `OPENAI_202602` | OpenAI Structured Outputs subset |
 | `GEMINI_202602` | Gemini baseline structured output |
-| `GEMINI_2_0_202602` | Gemini 2.0 with required `propertyOrdering` |
+| `GEMINI_202503` | Gemini 2.0 with required `propertyOrdering` |
 | `MINIMAL_202602` | Lowest common denominator across providers |
 
 ## Quick Start

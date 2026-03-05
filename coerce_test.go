@@ -59,7 +59,7 @@ func TestCoerceGemini20AddsPropertyOrdering(t *testing.T) {
 		"required": ["name", "age"]
 	}`
 
-	coerced, report, changed, err := CoerceSchema(GEMINI_2_0_202602, []byte(input), &CoerceOptions{Mode: CoerceModeConservative})
+	coerced, report, changed, err := CoerceSchema(GEMINI_202503, []byte(input), &CoerceOptions{Mode: CoerceModeConservative})
 	if err != nil {
 		t.Fatalf("CoerceSchema error: %v", err)
 	}
