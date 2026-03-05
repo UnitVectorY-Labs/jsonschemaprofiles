@@ -16,7 +16,7 @@ permalink: /schemas
 
 ---
 
-Schema profile files live in [`/schemas`](../schemas).  
+Schema profile files live in [`/schemas`](https://github.com/UnitVectorY-Labs/jsonschemaprofiles/tree/main/schemas).  
 These profiles validate **JSON Schema documents** against provider requirements.
 
 ## Versioning Strategy
@@ -39,10 +39,10 @@ Use these enum-like identifiers in code when selecting requirement sets:
 ## Available Profiles And Restrictions
 
 - Gemini restrictions are documented as model/API behavior and are not split by SDK language.
-- [openai_202602.yaml](../schemas/openai_202602.yaml): OpenAI Structured Outputs subset. Enforces root object style and keyword subset. Additional runtime checks are still required for depth/property/string/enum limits.
-- [gemini_202602.yaml](../schemas/gemini_202602.yaml): Gemini JSON Schema subset from the documented support table.
-- [gemini_2_0_202602.yaml](../schemas/gemini_2_0_202602.yaml): Gemini 2.0-focused profile. Same subset as `gemini_202602` plus required `propertyOrdering` for object schemas.
-- [minimal_202602.yaml](../schemas/minimal_202602.yaml): Lowest common denominator across OpenAI and Gemini. This is the most portable profile.
+- [openai_202602.yaml](https://github.com/UnitVectorY-Labs/jsonschemaprofiles/blob/main/schemas/openai_202602.yaml): OpenAI Structured Outputs subset. Enforces root object style and keyword subset. Additional runtime checks are still required for depth/property/string/enum limits.
+- [gemini_202602.yaml](https://github.com/UnitVectorY-Labs/jsonschemaprofiles/blob/main/schemas/gemini_202602.yaml): Gemini JSON Schema subset from the documented support table.
+- [gemini_2_0_202602.yaml](https://github.com/UnitVectorY-Labs/jsonschemaprofiles/blob/main/schemas/gemini_2_0_202602.yaml): Gemini 2.0-focused profile. Same subset as `gemini_202602` plus required `propertyOrdering` for object schemas.
+- [minimal_202602.yaml](https://github.com/UnitVectorY-Labs/jsonschemaprofiles/blob/main/schemas/minimal_202602.yaml): Lowest common denominator across OpenAI and Gemini. This is the most portable profile.
 
 ## Provider Requirement Pages
 
@@ -53,7 +53,7 @@ Use these enum-like identifiers in code when selecting requirement sets:
 
 Use a two-phase validation flow:
 
-- Phase 1: validate the candidate schema against one profile meta-schema in [`/schemas`](../schemas).
+- Phase 1: validate the candidate schema against one profile meta-schema in [`/schemas`](https://github.com/UnitVectorY-Labs/jsonschemaprofiles/tree/main/schemas).
 - Phase 2: run provider-specific code checks for constraints not fully representable in JSON Schema (for example OpenAI global budgets and model-target checks).
 
 Passing only phase 1 is not sufficient for full provider compliance.

@@ -33,8 +33,10 @@ Choose the appropriate binary for your platform and add it to your PATH.
 Install directly from the Go toolchain:
 
 ```bash
-go install github.com/UnitVectorY-Labs/jsonschemaprofiles/cmd/jsonschemaprofiles@latest
+go install github.com/UnitVectorY-Labs/jsonschemaprofiles/cmd/jsonschemaprofiles/cmd/jsonschemaprofiles@latest
 ```
+
+This installs the command-line tool globally, allowing you to run `jsonschemaprofiles` from any terminal. The intended use of this is as a library, but it can be used as a CLI tool as well for quick testing and development.
 
 ### Build from Source
 

@@ -1,8 +1,9 @@
 ---
 layout: default
+parent: Schemas
 title: OpenAI
 nav_order: 5
-permalink: /openai
+permalink: /schemas/openai
 ---
 
 # OpenAI Structured Outputs Profile

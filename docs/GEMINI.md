@@ -1,8 +1,9 @@
 ---
 layout: default
+parent: Schemas
 title: Gemini
 nav_order: 6
-permalink: /gemini
+permalink: /schemas/gemini
 ---
 
 # Gemini Structured Output Profile
