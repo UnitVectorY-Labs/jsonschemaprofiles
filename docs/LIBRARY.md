@@ -84,7 +84,8 @@ if changed {
     // coerced contains the modified schema bytes
     os.Stdout.Write(coerced)
 }
-// report contains details of all applied changes
+// report includes coercion actions plus validation findings
+// report.Valid describes whether the resulting schema is compliant
 fmt.Println(report.Text())
 ```
 
@@ -96,7 +97,7 @@ coerced, report, changed, err := jsp.CoerceSchema(jsp.OPENAI_202602, schemaBytes
     DryRun: true,
 })
 // coerced == original bytes (unchanged)
-// report describes what WOULD change
+// report describes what WOULD change and whether the proposed result is compliant
 // changed indicates if changes would be needed
 ```
 

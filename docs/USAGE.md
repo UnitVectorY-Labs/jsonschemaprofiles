@@ -60,7 +60,7 @@ jsonschemaprofiles validate schema --profile OPENAI_202602 --in schema.json --st
 
 ### `coerce schema`
 
-Produce a coerced schema and a report of changes.
+Produce a coerced schema and a report that includes coercion actions plus final validation findings.
 
 ```bash
 jsonschemaprofiles coerce schema --profile OPENAI_202602 --in schema.json --out coerced.json
@@ -70,7 +70,7 @@ jsonschemaprofiles coerce schema --profile OPENAI_202602 --in schema.json --out 
 |---|---|
 | `--profile` | Profile ID (required) |
 | `--in` | Input file path, or `-` for stdin |
-| `--out` | Output file for coerced schema (default: stdout) |
+| `--out` | Output file for resulting schema (default: stdout) |
 | `--dry-run` | Show proposed changes without applying |
 | `--mode` | `conservative` (default) or `permissive` |
 | `--format` | Report format: `text` (default) or `json` |

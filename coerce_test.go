@@ -178,4 +178,54 @@ func TestCoercePermissiveDropsKeywords(t *testing.T) {
 	if !found {
 		t.Error("expected COERCE_DROP_UNSUPPORTED_KEYWORD finding")
 	}
+	if !report.Valid {
+		t.Error("expected report to be valid after permissive coercion")
+	}
+}
+
+func TestCoerceConservativeReportsInvalidWhenSchemaRemainsNonCompliant(t *testing.T) {
+	input := `{"type":"object","properties":{"value":{"type":"string","if":{"const":"x"},"then":{"type":"string"}}},"required":["value"],"additionalProperties":false}`
+
+	coerced, report, changed, err := CoerceSchema(OPENAI_202602, []byte(input), &CoerceOptions{Mode: CoerceModeConservative})
+	if err != nil {
+		t.Fatalf("CoerceSchema error: %v", err)
+	}
+	if changed {
+		t.Error("expected no coercion changes for unsupported keywords in conservative mode")
+	}
+	if string(coerced) != input {
+		t.Error("expected unchanged bytes when no changes are applied")
+	}
+	if report.Valid {
+		t.Error("expected invalid report when schema remains non-compliant after coercion")
+	}
+
+	foundMetaValidation := false
+	for _, f := range report.Findings {
+		if f.Code == "META_SCHEMA_VALIDATION" {
+			foundMetaValidation = true
+			break
+		}
+	}
+	if !foundMetaValidation {
+		t.Error("expected meta-schema validation finding in coercion report")
+	}
+}
+
+func TestCoerceNoChangesReturnsOriginalBytes(t *testing.T) {
+	input := `{"type":"object","properties":{"name":{"type":"string"}},"required":["name"],"additionalProperties":false}`
+
+	coerced, report, changed, err := CoerceSchema(OPENAI_202602, []byte(input), &CoerceOptions{Mode: CoerceModeConservative})
+	if err != nil {
+		t.Fatalf("CoerceSchema error: %v", err)
+	}
+	if changed {
+		t.Error("expected no changes for already compliant schema")
+	}
+	if !report.Valid {
+		t.Error("expected valid report for already compliant schema")
+	}
+	if string(coerced) != input {
+		t.Error("expected original bytes to be returned when no changes are applied")
+	}
 }

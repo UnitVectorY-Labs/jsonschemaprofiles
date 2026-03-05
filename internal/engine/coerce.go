@@ -56,9 +56,31 @@ func CoerceSchema(profileID string, schemaFile string, metaSchemaYAML []byte, sc
 		return nil, nil, false, fmt.Errorf("unknown profile: %s", profileID)
 	}
 
+	// Validate the post-coercion schema to ensure the resulting report reflects
+	// actual compliance, not only applied coercion actions.
+	validationTarget := schemaBytes
+	if changed {
+		var err error
+		validationTarget, err = json.Marshal(schema)
+		if err != nil {
+			return nil, nil, false, fmt.Errorf("failed to serialize coerced schema for validation: %w", err)
+		}
+	}
+	validationReport, err := ValidateSchema(profileID, schemaFile, metaSchemaYAML, validationTarget, nil)
+	if err != nil {
+		return nil, nil, false, fmt.Errorf("failed to validate coerced schema: %w", err)
+	}
+	mergeReports(report, validationReport)
+
 	if opts.DryRun {
-		// Return original bytes with the report of proposed changes
+		// Return original bytes, but the report reflects whether the
+		// proposed/coerced result would be compliant.
 		return schemaBytes, report, changed, nil
+	}
+
+	// Keep exact input bytes when no semantic changes were applied.
+	if !changed {
+		return schemaBytes, report, false, nil
 	}
 
 	// Serialize the coerced schema
@@ -461,4 +483,13 @@ func coerceMinimal(obj map[string]interface{}, path string, report *Report, opts
 
 func sortStrings(s []string) {
 	sort.Strings(s)
+}
+
+func mergeReports(dst *Report, src *Report) {
+	if dst == nil || src == nil {
+		return
+	}
+	for _, finding := range src.Findings {
+		dst.AddFinding(finding)
+	}
 }

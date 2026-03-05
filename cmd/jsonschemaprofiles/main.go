@@ -158,14 +158,14 @@ func cmdCoerceSchema(args []string) {
 		DryRun: *dryRun,
 	}
 
-	coercedBytes, report, changed, err := jsp.CoerceSchema(jsp.ProfileID(*profile), schemaBytes, opts)
+	coercedBytes, report, _, err := jsp.CoerceSchema(jsp.ProfileID(*profile), schemaBytes, opts)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(exitInternal)
 	}
 
 	// Write coerced schema
-	if !*dryRun && changed {
+	if !*dryRun {
 		if *outputFile != "" {
 			if err := os.WriteFile(*outputFile, coercedBytes, 0644); err != nil {
 				fmt.Fprintf(os.Stderr, "Error writing output: %v\n", err)
