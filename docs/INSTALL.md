@@ -33,7 +33,7 @@ Choose the appropriate binary for your platform and add it to your PATH.
 Install directly from the Go toolchain:
 
 ```bash
-go install github.com/UnitVectorY-Labs/jsonschemaprofiles@latest
+go install github.com/UnitVectorY-Labs/jsonschemaprofiles/cmd/jsonschemaprofiles@latest
 ```
 
 ### Build from Source
@@ -43,5 +43,5 @@ Build the application from source code:
 ```bash
 git clone https://github.com/UnitVectorY-Labs/jsonschemaprofiles.git
 cd jsonschemaprofiles
-go build -o jsonschemaprofiles
+go build -o jsonschemaprofiles ./cmd/jsonschemaprofiles/
 ```
