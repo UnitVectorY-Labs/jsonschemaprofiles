@@ -1,6 +1,6 @@
 module github.com/UnitVectorY-Labs/jsonschemaprofiles
 
-go 1.26.0 // GOVERSION
+go 1.26 // GOVERSION
 
 require (
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
