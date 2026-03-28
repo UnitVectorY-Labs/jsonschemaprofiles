@@ -1,0 +1,11 @@
+name: jsonschemaprofiles
+default_branch: main
+config:
+  description: "A Go library and CLI tool for validating that JSON Schema documents conform to provider-specific structured-output restrictions."
+  license: MIT
+  language: go
+  release: release-go
+  justfile: true
+  docs:
+    enabled: true
+    domain: jsonschemaprofiles.unitvectorylabs.com

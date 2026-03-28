@@ -1,13 +1,12 @@
 
-# List all available commands
+# Commands for jsonschemaprofiles
 default:
   @just --list
-
-# Build the Go application
+# Build jsonschemaprofiles with Go
 build:
   go build ./...
 
-# Run the Go tests
+# Run tests for jsonschemaprofiles with Go
 test:
   go clean -testcache
   go test ./...
