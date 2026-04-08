@@ -1,7 +1,7 @@
 name: jsonschemaprofiles
 default_branch: main
 config:
-  description: "A Go library and CLI tool for validating that JSON Schema documents conform to provider-specific structured-output restrictions."
+  description: "A Go library and CLI tool for validating that JSON Schema documents conform to provider-specific structured-output restrictions (for example Gemini and OpenAI)."
   license: MIT
   language: go
   release: release-go

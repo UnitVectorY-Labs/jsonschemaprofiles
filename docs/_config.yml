@@ -1,5 +1,5 @@
 title: jsonschemaprofiles
-description: "A Go library and CLI tool for validating that JSON Schema documents conform to provider-specific structured-output restrictions."
+description: "A Go library and CLI tool for validating that JSON Schema documents conform to provider-specific structured-output restrictions (for example Gemini and OpenAI)."
 
 remote_theme: just-the-docs/just-the-docs@v0.12.0
 plugins:
