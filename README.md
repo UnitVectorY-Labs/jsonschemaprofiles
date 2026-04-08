@@ -1,6 +1,8 @@
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Work In Progress](https://img.shields.io/badge/Status-Work%20In%20Progress-yellow)](https://guide.unitvectorylabs.com/bestpractices/status/#work-in-progress) 
+
 # jsonschemaprofiles
 
-A Go library and CLI tool for validating that **JSON Schema documents** conform to provider-specific structured-output restrictions (for example Gemini and OpenAI).
+A Go library and CLI tool for validating that JSON Schema documents conform to provider-specific structured-output restrictions (for example Gemini and OpenAI).
 
 This project is about **schema-profile validation**—it validates schemas themselves, not JSON data instances.
 
