@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
+	"runtime"
 	"runtime/debug"
 	"strings"
 
@@ -12,6 +14,7 @@ import (
 )
 
 var Version = "dev"
+var semverRe = regexp.MustCompile(`^\d+\.\d+\.\d+`)
 
 // Exit codes
 const (
@@ -57,7 +60,7 @@ func main() {
 			os.Exit(exitInternal)
 		}
 	case "version":
-		fmt.Printf("jsonschemaprofiles %s\n", Version)
+		fmt.Printf("jsonschemaprofiles version %s\n", buildVersionOutput(Version))
 	case "help", "--help", "-h":
 		printUsage()
 	default:
@@ -208,4 +211,12 @@ func outputReportTo(report *jsp.Report, format string, w io.Writer) {
 	default:
 		fmt.Fprint(w, report.Text())
 	}
+}
+
+func buildVersionOutput(version string) string {
+	normalized := version
+	if semverRe.MatchString(normalized) && !strings.HasPrefix(normalized, "v") {
+		normalized = "v" + normalized
+	}
+	return fmt.Sprintf("%s (%s, %s/%s)", normalized, runtime.Version(), runtime.GOOS, runtime.GOARCH)
 }

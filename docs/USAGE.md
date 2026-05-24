@@ -88,6 +88,15 @@ jsonschemaprofiles coerce schema --profile OPENAI_202602 --in schema.json --dry-
 jsonschemaprofiles coerce schema --profile OPENAI_202602 --in schema.json --mode permissive
 ```
 
+### `version`
+
+Show the CLI version, including Go toolchain and platform metadata.
+
+```bash
+jsonschemaprofiles version
+# jsonschemaprofiles version vX.Y.Z (goX.Y.Z, os/arch)
+```
+
 ## Exit Codes
 
 | Code | Meaning |
