@@ -30,6 +30,14 @@ func TestBuildVersionOutputKeepsNonSemver(t *testing.T) {
 	}
 }
 
+func TestBuildVersionOutputKeepsEmptyString(t *testing.T) {
+	got := buildVersionOutput("")
+	want := fmt.Sprintf(" (%s, %s/%s)", runtime.Version(), runtime.GOOS, runtime.GOARCH)
+	if got != want {
+		t.Fatalf("unexpected output: got %q want %q", got, want)
+	}
+}
+
 func TestBuildVersionOutputKeepsPartialSemverWithoutPrefix(t *testing.T) {
 	got := buildVersionOutput("1.2")
 	want := fmt.Sprintf("1.2 (%s, %s/%s)", runtime.Version(), runtime.GOOS, runtime.GOARCH)
