@@ -14,7 +14,7 @@ import (
 )
 
 var Version = "dev"
-var semverRegex = regexp.MustCompile(`^\d+\.\d+\.\d+`)
+const semverPattern = `^\d+\.\d+\.\d+`
 
 // Exit codes
 const (
@@ -215,7 +215,7 @@ func outputReportTo(report *jsp.Report, format string, w io.Writer) {
 
 func buildVersionOutput(version string) string {
 	normalized := version
-	if semverRegex.MatchString(normalized) && !strings.HasPrefix(normalized, "v") {
+	if matched, _ := regexp.MatchString(semverPattern, normalized); matched && !strings.HasPrefix(normalized, "v") {
 		normalized = "v" + normalized
 	}
 	return fmt.Sprintf("%s (%s, %s/%s)", normalized, runtime.Version(), runtime.GOOS, runtime.GOARCH)
