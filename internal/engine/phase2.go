@@ -1,7 +1,7 @@
 package engine
 
 // validatePhase2 dispatches to profile-specific phase 2 checks.
-func validatePhase2(profileID string, candidateMap map[string]interface{}, rawBytes []byte, report *Report, opts *ValidateOptions) {
+func validatePhase2(profileID string, candidateMap map[string]any, rawBytes []byte, report *Report, opts *ValidateOptions) {
 	if candidateMap == nil {
 		return
 	}

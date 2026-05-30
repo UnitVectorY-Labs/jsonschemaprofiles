@@ -32,7 +32,7 @@ func ValidateSchema(profileID string, schemaFile string, metaSchemaYAML []byte, 
 	report := NewReport()
 
 	// Parse candidate schema
-	var candidate interface{}
+	var candidate any
 	if err := json.Unmarshal(schemaBytes, &candidate); err != nil {
 		return nil, fmt.Errorf("failed to parse candidate schema as JSON: %w", err)
 	}
@@ -44,7 +44,7 @@ func ValidateSchema(profileID string, schemaFile string, metaSchemaYAML []byte, 
 
 	// Phase 2: provider-specific code checks
 	// Parse into ordered map for traversal
-	var candidateMap map[string]interface{}
+	var candidateMap map[string]any
 	if err := json.Unmarshal(schemaBytes, &candidateMap); err != nil {
 		// Not an object at top level - phase 2 will catch this
 		candidateMap = nil
@@ -66,9 +66,9 @@ func ValidateSchema(profileID string, schemaFile string, metaSchemaYAML []byte, 
 }
 
 // validatePhase1 validates the candidate schema against the profile's meta-schema.
-func validatePhase1(schemaFile string, metaSchemaYAML []byte, candidate interface{}, report *Report) error {
+func validatePhase1(schemaFile string, metaSchemaYAML []byte, candidate any, report *Report) error {
 	// Parse YAML to generic structure
-	var metaSchemaObj interface{}
+	var metaSchemaObj any
 	if err := yaml.Unmarshal(metaSchemaYAML, &metaSchemaObj); err != nil {
 		return fmt.Errorf("failed to parse profile meta-schema YAML: %w", err)
 	}
@@ -142,21 +142,21 @@ func instanceLocationToPath(loc []string) string {
 // yamlToJSON converts YAML-decoded types to JSON-compatible types.
 // YAML v3 decodes maps as map[string]interface{} which is fine,
 // but some values might need conversion.
-func yamlToJSON(v interface{}) interface{} {
+func yamlToJSON(v any) any {
 	switch val := v.(type) {
-	case map[string]interface{}:
-		m := make(map[string]interface{}, len(val))
+	case map[string]any:
+		m := make(map[string]any, len(val))
 		for k, v := range val {
 			m[k] = yamlToJSON(v)
 		}
 		return m
-	case map[interface{}]interface{}:
-		m := make(map[string]interface{}, len(val))
+	case map[any]any:
+		m := make(map[string]any, len(val))
 		for k, v := range val {
 			m[fmt.Sprintf("%v", k)] = yamlToJSON(v)
 		}
 		return m
-	case []interface{}:
+	case []any:
 		for i, v := range val {
 			val[i] = yamlToJSON(v)
 		}

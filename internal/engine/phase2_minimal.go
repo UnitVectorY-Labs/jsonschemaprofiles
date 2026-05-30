@@ -5,7 +5,7 @@ import (
 	"sort"
 )
 
-func validatePhase2Minimal(candidateMap map[string]interface{}, rawBytes []byte, report *Report) {
+func validatePhase2Minimal(candidateMap map[string]any, rawBytes []byte, report *Report) {
 	// Root must be type: object (already enforced by meta-schema, but double check)
 	rootType, _ := candidateMap["type"]
 	if rootType != "object" {
@@ -24,7 +24,7 @@ func validatePhase2Minimal(candidateMap map[string]interface{}, rawBytes []byte,
 	checkMinimalNestedDiscipline(candidateMap, "", report)
 }
 
-func checkMinimalObjectDiscipline(obj map[string]interface{}, path string, report *Report) {
+func checkMinimalObjectDiscipline(obj map[string]any, path string, report *Report) {
 	// Check additionalProperties is false
 	ap, hasAP := obj["additionalProperties"]
 	if !hasAP {
@@ -49,7 +49,7 @@ func checkMinimalObjectDiscipline(obj map[string]interface{}, path string, repor
 	req, hasReq := obj["required"]
 
 	if hasProps {
-		propsMap, _ := props.(map[string]interface{})
+		propsMap, _ := props.(map[string]any)
 		if propsMap != nil {
 			propKeys := make(map[string]bool)
 			for k := range propsMap {
@@ -63,7 +63,7 @@ func checkMinimalObjectDiscipline(obj map[string]interface{}, path string, repor
 					Path:     path,
 					Message:  "Object with properties must have required listing all property keys",
 				})
-			} else if reqArr, ok := req.([]interface{}); ok {
+			} else if reqArr, ok := req.([]any); ok {
 				reqKeys := make(map[string]bool)
 				for _, r := range reqArr {
 					if s, ok := r.(string); ok {
@@ -105,17 +105,17 @@ func checkMinimalObjectDiscipline(obj map[string]interface{}, path string, repor
 	}
 }
 
-func checkMinimalNestedDiscipline(node interface{}, path string, report *Report) {
-	obj, ok := node.(map[string]interface{})
+func checkMinimalNestedDiscipline(node any, path string, report *Report) {
+	obj, ok := node.(map[string]any)
 	if !ok {
 		return
 	}
 
 	if props, ok := obj["properties"]; ok {
-		if propsMap, ok := props.(map[string]interface{}); ok {
+		if propsMap, ok := props.(map[string]any); ok {
 			for name, propSchema := range propsMap {
 				propPath := path + "/properties/" + name
-				if propObj, ok := propSchema.(map[string]interface{}); ok {
+				if propObj, ok := propSchema.(map[string]any); ok {
 					if isObjectType(propSchema) {
 						checkMinimalObjectDiscipline(propObj, propPath, report)
 					}
@@ -126,7 +126,7 @@ func checkMinimalNestedDiscipline(node interface{}, path string, report *Report)
 	}
 
 	if items, ok := obj["items"]; ok {
-		if itemObj, ok := items.(map[string]interface{}); ok {
+		if itemObj, ok := items.(map[string]any); ok {
 			if isObjectType(items) {
 				checkMinimalObjectDiscipline(itemObj, path+"/items", report)
 			}
