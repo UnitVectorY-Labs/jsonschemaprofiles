@@ -22,7 +22,7 @@ func TestCoerceOpenAIAddsMissingFields(t *testing.T) {
 		t.Error("expected changes but got none")
 	}
 
-	var result map[string]interface{}
+	var result map[string]any
 	if err := json.Unmarshal(coerced, &result); err != nil {
 		t.Fatalf("failed to parse coerced schema: %v", err)
 	}
@@ -37,7 +37,7 @@ func TestCoerceOpenAIAddsMissingFields(t *testing.T) {
 	if !ok {
 		t.Error("expected required field")
 	}
-	if reqArr, ok := req.([]interface{}); ok {
+	if reqArr, ok := req.([]any); ok {
 		if len(reqArr) != 1 || reqArr[0] != "name" {
 			t.Errorf("expected required: [\"name\"], got: %v", reqArr)
 		}
@@ -67,7 +67,7 @@ func TestCoerceGemini20AddsPropertyOrdering(t *testing.T) {
 		t.Error("expected changes but got none")
 	}
 
-	var result map[string]interface{}
+	var result map[string]any
 	if err := json.Unmarshal(coerced, &result); err != nil {
 		t.Fatalf("failed to parse coerced schema: %v", err)
 	}
@@ -158,7 +158,7 @@ func TestCoercePermissiveDropsKeywords(t *testing.T) {
 		t.Error("expected changes")
 	}
 
-	var result map[string]interface{}
+	var result map[string]any
 	if err := json.Unmarshal(coerced, &result); err != nil {
 		t.Fatalf("failed to parse: %v", err)
 	}

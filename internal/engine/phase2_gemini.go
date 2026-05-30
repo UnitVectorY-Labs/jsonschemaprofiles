@@ -4,21 +4,21 @@ import (
 	"fmt"
 )
 
-func validatePhase2Gemini(candidateMap map[string]interface{}, report *Report, requirePropertyOrdering bool) {
+func validatePhase2Gemini(candidateMap map[string]any, report *Report, requirePropertyOrdering bool) {
 	checkGeminiSchema(candidateMap, "", report, requirePropertyOrdering)
 }
 
-func checkGeminiSchema(node interface{}, path string, report *Report, requirePropertyOrdering bool) {
-	obj, ok := node.(map[string]interface{})
+func checkGeminiSchema(node any, path string, report *Report, requirePropertyOrdering bool) {
+	obj, ok := node.(map[string]any)
 	if !ok {
 		return
 	}
 
 	// Check required entries exist in properties
 	if props, ok := obj["properties"]; ok {
-		if propsMap, ok := props.(map[string]interface{}); ok {
+		if propsMap, ok := props.(map[string]any); ok {
 			if req, ok := obj["required"]; ok {
-				if reqArr, ok := req.([]interface{}); ok {
+				if reqArr, ok := req.([]any); ok {
 					for _, r := range reqArr {
 						if s, ok := r.(string); ok {
 							if _, exists := propsMap[s]; !exists {
@@ -37,7 +37,7 @@ func checkGeminiSchema(node interface{}, path string, report *Report, requirePro
 
 			// Check propertyOrdering if present
 			if po, ok := obj["propertyOrdering"]; ok {
-				if poArr, ok := po.([]interface{}); ok {
+				if poArr, ok := po.([]any); ok {
 					seen := make(map[string]bool)
 					for _, p := range poArr {
 						if s, ok := p.(string); ok {
@@ -109,7 +109,7 @@ func checkGeminiSchema(node interface{}, path string, report *Report, requirePro
 
 	// Recurse into prefixItems
 	if prefixItems, ok := obj["prefixItems"]; ok {
-		if arr, ok := prefixItems.([]interface{}); ok {
+		if arr, ok := prefixItems.([]any); ok {
 			for i, item := range arr {
 				checkGeminiSchema(item, fmt.Sprintf("%s/prefixItems/%d", path, i), report, requirePropertyOrdering)
 			}
@@ -118,14 +118,14 @@ func checkGeminiSchema(node interface{}, path string, report *Report, requirePro
 
 	// Recurse into additionalProperties if it's a schema
 	if ap, ok := obj["additionalProperties"]; ok {
-		if apMap, ok := ap.(map[string]interface{}); ok {
+		if apMap, ok := ap.(map[string]any); ok {
 			checkGeminiSchema(apMap, path+"/additionalProperties", report, requirePropertyOrdering)
 		}
 	}
 }
 
 // isArrayTypeObj checks if the object has type: array or type: ["array", ...]
-func isArrayTypeObj(obj map[string]interface{}) bool {
+func isArrayTypeObj(obj map[string]any) bool {
 	t, ok := obj["type"]
 	if !ok {
 		return false
@@ -133,7 +133,7 @@ func isArrayTypeObj(obj map[string]interface{}) bool {
 	switch tv := t.(type) {
 	case string:
 		return tv == "array"
-	case []interface{}:
+	case []any:
 		for _, v := range tv {
 			if s, ok := v.(string); ok && s == "array" {
 				return true
@@ -144,7 +144,7 @@ func isArrayTypeObj(obj map[string]interface{}) bool {
 }
 
 // isObjectTypeObj checks if the object has type: object or type: ["object", ...]
-func isObjectTypeObj(obj map[string]interface{}) bool {
+func isObjectTypeObj(obj map[string]any) bool {
 	t, ok := obj["type"]
 	if !ok {
 		return false
@@ -152,7 +152,7 @@ func isObjectTypeObj(obj map[string]interface{}) bool {
 	switch tv := t.(type) {
 	case string:
 		return tv == "object"
-	case []interface{}:
+	case []any:
 		for _, v := range tv {
 			if s, ok := v.(string); ok && s == "object" {
 				return true

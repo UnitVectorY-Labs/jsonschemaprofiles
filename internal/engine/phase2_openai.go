@@ -23,7 +23,7 @@ var openAIFineTunedUnsupported = map[string][]string{
 	"array":  {"unevaluatedItems", "contains", "minContains", "maxContains", "minItems", "maxItems", "uniqueItems"},
 }
 
-func validatePhase2OpenAI(candidateMap map[string]interface{}, rawBytes []byte, report *Report, opts *ValidateOptions) {
+func validatePhase2OpenAI(candidateMap map[string]any, rawBytes []byte, report *Report, opts *ValidateOptions) {
 	// Check root is type: object
 	rootType, _ := candidateMap["type"]
 	if rootType != "object" {
@@ -113,7 +113,7 @@ func validatePhase2OpenAI(candidateMap map[string]interface{}, rawBytes []byte, 
 
 // checkOpenAIObjectDiscipline checks that an object schema has additionalProperties: false
 // and that required matches properties keys exactly.
-func checkOpenAIObjectDiscipline(obj map[string]interface{}, path string, report *Report) {
+func checkOpenAIObjectDiscipline(obj map[string]any, path string, report *Report) {
 	// Check additionalProperties
 	ap, hasAP := obj["additionalProperties"]
 	if !hasAP {
@@ -139,7 +139,7 @@ func checkOpenAIObjectDiscipline(obj map[string]interface{}, path string, report
 	req, hasReq := obj["required"]
 
 	if hasProps {
-		propsMap, _ := props.(map[string]interface{})
+		propsMap, _ := props.(map[string]any)
 		if propsMap != nil {
 			propKeys := make(map[string]bool)
 			for k := range propsMap {
@@ -154,7 +154,7 @@ func checkOpenAIObjectDiscipline(obj map[string]interface{}, path string, report
 					Message:  "Object with properties must have required listing all property keys",
 					Hint:     "Add a \"required\" array listing all property names",
 				})
-			} else if reqArr, ok := req.([]interface{}); ok {
+			} else if reqArr, ok := req.([]any); ok {
 				reqKeys := make(map[string]bool)
 				for _, r := range reqArr {
 					if s, ok := r.(string); ok {
@@ -201,8 +201,8 @@ func checkOpenAIObjectDiscipline(obj map[string]interface{}, path string, report
 }
 
 // checkOpenAINestedObjectDiscipline walks nested object schemas and checks discipline.
-func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Report, ctx *traverseContext, visitedRefs map[string]bool) {
-	obj, ok := node.(map[string]interface{})
+func checkOpenAINestedObjectDiscipline(node any, path string, report *Report, ctx *traverseContext, visitedRefs map[string]bool) {
+	obj, ok := node.(map[string]any)
 	if !ok {
 		return
 	}
@@ -216,7 +216,7 @@ func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Re
 			visitedRefs[refStr] = true
 			resolved := resolveRef(refStr, ctx.defs)
 			if resolved != nil {
-				if resolvedObj, ok := resolved.(map[string]interface{}); ok {
+				if resolvedObj, ok := resolved.(map[string]any); ok {
 					if isObjectType(resolved) {
 						checkOpenAIObjectDiscipline(resolvedObj, path, report)
 					}
@@ -230,10 +230,10 @@ func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Re
 
 	// Check properties
 	if props, ok := obj["properties"]; ok {
-		if propsMap, ok := props.(map[string]interface{}); ok {
+		if propsMap, ok := props.(map[string]any); ok {
 			for name, propSchema := range propsMap {
 				propPath := path + "/properties/" + name
-				if propObj, ok := propSchema.(map[string]interface{}); ok {
+				if propObj, ok := propSchema.(map[string]any); ok {
 					if isObjectType(propSchema) {
 						checkOpenAIObjectDiscipline(propObj, propPath, report)
 					}
@@ -245,7 +245,7 @@ func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Re
 
 	// Check items
 	if items, ok := obj["items"]; ok {
-		if itemObj, ok := items.(map[string]interface{}); ok {
+		if itemObj, ok := items.(map[string]any); ok {
 			if isObjectType(items) {
 				checkOpenAIObjectDiscipline(itemObj, path+"/items", report)
 			}
@@ -255,10 +255,10 @@ func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Re
 
 	// Check anyOf
 	if anyOf, ok := obj["anyOf"]; ok {
-		if arr, ok := anyOf.([]interface{}); ok {
+		if arr, ok := anyOf.([]any); ok {
 			for i, item := range arr {
 				itemPath := fmt.Sprintf("%s/anyOf/%d", path, i)
-				if itemObj, ok := item.(map[string]interface{}); ok {
+				if itemObj, ok := item.(map[string]any); ok {
 					if isObjectType(item) {
 						checkOpenAIObjectDiscipline(itemObj, itemPath, report)
 					}
@@ -270,10 +270,10 @@ func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Re
 
 	// Check $defs
 	if defs, ok := obj["$defs"]; ok {
-		if defsMap, ok := defs.(map[string]interface{}); ok {
+		if defsMap, ok := defs.(map[string]any); ok {
 			for name, defSchema := range defsMap {
 				defPath := path + "/$defs/" + name
-				if defObj, ok := defSchema.(map[string]interface{}); ok {
+				if defObj, ok := defSchema.(map[string]any); ok {
 					if isObjectType(defSchema) {
 						checkOpenAIObjectDiscipline(defObj, defPath, report)
 					}
@@ -285,7 +285,7 @@ func checkOpenAINestedObjectDiscipline(node interface{}, path string, report *Re
 }
 
 // resolveRef resolves a local $ref to its target node.
-func resolveRef(ref string, defs map[string]interface{}) interface{} {
+func resolveRef(ref string, defs map[string]any) any {
 	if defs == nil {
 		return nil
 	}
@@ -300,8 +300,8 @@ func resolveRef(ref string, defs map[string]interface{}) interface{} {
 }
 
 // checkOpenAIFineTunedKeywords checks for keywords unsupported by fine-tuned models.
-func checkOpenAIFineTunedKeywords(node interface{}, path string, report *Report) {
-	obj, ok := node.(map[string]interface{})
+func checkOpenAIFineTunedKeywords(node any, path string, report *Report) {
+	obj, ok := node.(map[string]any)
 	if !ok {
 		return
 	}
@@ -328,7 +328,7 @@ func checkOpenAIFineTunedKeywords(node interface{}, path string, report *Report)
 
 	// Recurse into nested schemas
 	if props, ok := obj["properties"]; ok {
-		if propsMap, ok := props.(map[string]interface{}); ok {
+		if propsMap, ok := props.(map[string]any); ok {
 			for name, propSchema := range propsMap {
 				checkOpenAIFineTunedKeywords(propSchema, path+"/properties/"+name, report)
 			}
@@ -338,14 +338,14 @@ func checkOpenAIFineTunedKeywords(node interface{}, path string, report *Report)
 		checkOpenAIFineTunedKeywords(items, path+"/items", report)
 	}
 	if anyOf, ok := obj["anyOf"]; ok {
-		if arr, ok := anyOf.([]interface{}); ok {
+		if arr, ok := anyOf.([]any); ok {
 			for i, item := range arr {
 				checkOpenAIFineTunedKeywords(item, fmt.Sprintf("%s/anyOf/%d", path, i), report)
 			}
 		}
 	}
 	if defs, ok := obj["$defs"]; ok {
-		if defsMap, ok := defs.(map[string]interface{}); ok {
+		if defsMap, ok := defs.(map[string]any); ok {
 			for name, defSchema := range defsMap {
 				checkOpenAIFineTunedKeywords(defSchema, path+"/$defs/"+name, report)
 			}
@@ -354,7 +354,7 @@ func checkOpenAIFineTunedKeywords(node interface{}, path string, report *Report)
 }
 
 // getSchemaType returns the base type string from a schema node.
-func getSchemaType(obj map[string]interface{}) string {
+func getSchemaType(obj map[string]any) string {
 	t, ok := obj["type"]
 	if !ok {
 		return ""
@@ -362,7 +362,7 @@ func getSchemaType(obj map[string]interface{}) string {
 	switch tv := t.(type) {
 	case string:
 		return tv
-	case []interface{}:
+	case []any:
 		// Return the non-null type
 		for _, v := range tv {
 			if s, ok := v.(string); ok && s != "null" {

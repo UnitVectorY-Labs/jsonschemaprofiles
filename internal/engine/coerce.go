@@ -36,7 +36,7 @@ func CoerceSchema(profileID string, schemaFile string, metaSchemaYAML []byte, sc
 	report := NewReport()
 
 	// Parse into a modifiable structure
-	var schema map[string]interface{}
+	var schema map[string]any
 	if err := json.Unmarshal(schemaBytes, &schema); err != nil {
 		return nil, nil, false, fmt.Errorf("failed to parse schema: %w", err)
 	}
@@ -93,7 +93,7 @@ func CoerceSchema(profileID string, schemaFile string, metaSchemaYAML []byte, sc
 }
 
 // coerceOpenAI applies OpenAI-specific coercions.
-func coerceOpenAI(obj map[string]interface{}, path string, report *Report, opts *CoerceOptions) bool {
+func coerceOpenAI(obj map[string]any, path string, report *Report, opts *CoerceOptions) bool {
 	changed := false
 
 	// Add type: object if properties present and type missing
@@ -137,7 +137,7 @@ func coerceOpenAI(obj map[string]interface{}, path string, report *Report, opts 
 
 		// Fill required if missing
 		if props, ok := obj["properties"]; ok {
-			if propsMap, ok := props.(map[string]interface{}); ok {
+			if propsMap, ok := props.(map[string]any); ok {
 				if _, hasReq := obj["required"]; !hasReq {
 					keys := make([]string, 0, len(propsMap))
 					for k := range propsMap {
@@ -145,7 +145,7 @@ func coerceOpenAI(obj map[string]interface{}, path string, report *Report, opts 
 					}
 					// Sort for deterministic output
 					sortStrings(keys)
-					reqArr := make([]interface{}, len(keys))
+					reqArr := make([]any, len(keys))
 					for i, k := range keys {
 						reqArr[i] = k
 					}
@@ -160,7 +160,7 @@ func coerceOpenAI(obj map[string]interface{}, path string, report *Report, opts 
 					})
 				} else {
 					// Add missing keys to required
-					if reqArr, ok := obj["required"].([]interface{}); ok {
+					if reqArr, ok := obj["required"].([]any); ok {
 						reqKeys := make(map[string]bool)
 						for _, r := range reqArr {
 							if s, ok := r.(string); ok {
@@ -193,9 +193,9 @@ func coerceOpenAI(obj map[string]interface{}, path string, report *Report, opts 
 
 	// Recurse into nested schemas
 	if props, ok := obj["properties"]; ok {
-		if propsMap, ok := props.(map[string]interface{}); ok {
+		if propsMap, ok := props.(map[string]any); ok {
 			for name, propSchema := range propsMap {
-				if propObj, ok := propSchema.(map[string]interface{}); ok {
+				if propObj, ok := propSchema.(map[string]any); ok {
 					if coerceOpenAI(propObj, path+"/properties/"+name, report, opts) {
 						changed = true
 					}
@@ -204,16 +204,16 @@ func coerceOpenAI(obj map[string]interface{}, path string, report *Report, opts 
 		}
 	}
 	if items, ok := obj["items"]; ok {
-		if itemsObj, ok := items.(map[string]interface{}); ok {
+		if itemsObj, ok := items.(map[string]any); ok {
 			if coerceOpenAI(itemsObj, path+"/items", report, opts) {
 				changed = true
 			}
 		}
 	}
 	if anyOf, ok := obj["anyOf"]; ok {
-		if arr, ok := anyOf.([]interface{}); ok {
+		if arr, ok := anyOf.([]any); ok {
 			for i, item := range arr {
-				if itemObj, ok := item.(map[string]interface{}); ok {
+				if itemObj, ok := item.(map[string]any); ok {
 					if coerceOpenAI(itemObj, fmt.Sprintf("%s/anyOf/%d", path, i), report, opts) {
 						changed = true
 					}
@@ -222,9 +222,9 @@ func coerceOpenAI(obj map[string]interface{}, path string, report *Report, opts 
 		}
 	}
 	if defs, ok := obj["$defs"]; ok {
-		if defsMap, ok := defs.(map[string]interface{}); ok {
+		if defsMap, ok := defs.(map[string]any); ok {
 			for name, defSchema := range defsMap {
-				if defObj, ok := defSchema.(map[string]interface{}); ok {
+				if defObj, ok := defSchema.(map[string]any); ok {
 					if coerceOpenAI(defObj, path+"/$defs/"+name, report, opts) {
 						changed = true
 					}
@@ -255,7 +255,7 @@ func coerceOpenAI(obj map[string]interface{}, path string, report *Report, opts 
 }
 
 // coerceGemini applies Gemini-specific coercions.
-func coerceGemini(obj map[string]interface{}, path string, report *Report, opts *CoerceOptions, requirePropertyOrdering bool) bool {
+func coerceGemini(obj map[string]any, path string, report *Report, opts *CoerceOptions, requirePropertyOrdering bool) bool {
 	changed := false
 
 	// Add type if missing and inferable
@@ -297,13 +297,13 @@ func coerceGemini(obj map[string]interface{}, path string, report *Report, opts 
 	if requirePropertyOrdering && isObjectTypeObj(obj) {
 		if _, hasPO := obj["propertyOrdering"]; !hasPO {
 			if props, ok := obj["properties"]; ok {
-				if propsMap, ok := props.(map[string]interface{}); ok {
+				if propsMap, ok := props.(map[string]any); ok {
 					keys := make([]string, 0, len(propsMap))
 					for k := range propsMap {
 						keys = append(keys, k)
 					}
 					sortStrings(keys)
-					poArr := make([]interface{}, len(keys))
+					poArr := make([]any, len(keys))
 					for i, k := range keys {
 						poArr[i] = k
 					}
@@ -323,9 +323,9 @@ func coerceGemini(obj map[string]interface{}, path string, report *Report, opts 
 
 	// Recurse
 	if props, ok := obj["properties"]; ok {
-		if propsMap, ok := props.(map[string]interface{}); ok {
+		if propsMap, ok := props.(map[string]any); ok {
 			for name, propSchema := range propsMap {
-				if propObj, ok := propSchema.(map[string]interface{}); ok {
+				if propObj, ok := propSchema.(map[string]any); ok {
 					if coerceGemini(propObj, path+"/properties/"+name, report, opts, requirePropertyOrdering) {
 						changed = true
 					}
@@ -334,16 +334,16 @@ func coerceGemini(obj map[string]interface{}, path string, report *Report, opts 
 		}
 	}
 	if items, ok := obj["items"]; ok {
-		if itemsObj, ok := items.(map[string]interface{}); ok {
+		if itemsObj, ok := items.(map[string]any); ok {
 			if coerceGemini(itemsObj, path+"/items", report, opts, requirePropertyOrdering) {
 				changed = true
 			}
 		}
 	}
 	if prefixItems, ok := obj["prefixItems"]; ok {
-		if arr, ok := prefixItems.([]interface{}); ok {
+		if arr, ok := prefixItems.([]any); ok {
 			for i, item := range arr {
-				if itemObj, ok := item.(map[string]interface{}); ok {
+				if itemObj, ok := item.(map[string]any); ok {
 					if coerceGemini(itemObj, fmt.Sprintf("%s/prefixItems/%d", path, i), report, opts, requirePropertyOrdering) {
 						changed = true
 					}
@@ -352,7 +352,7 @@ func coerceGemini(obj map[string]interface{}, path string, report *Report, opts 
 		}
 	}
 	if ap, ok := obj["additionalProperties"]; ok {
-		if apMap, ok := ap.(map[string]interface{}); ok {
+		if apMap, ok := ap.(map[string]any); ok {
 			if coerceGemini(apMap, path+"/additionalProperties", report, opts, requirePropertyOrdering) {
 				changed = true
 			}
@@ -363,7 +363,7 @@ func coerceGemini(obj map[string]interface{}, path string, report *Report, opts 
 }
 
 // coerceMinimal applies Minimal profile coercions (OpenAI-like discipline).
-func coerceMinimal(obj map[string]interface{}, path string, report *Report, opts *CoerceOptions) bool {
+func coerceMinimal(obj map[string]any, path string, report *Report, opts *CoerceOptions) bool {
 	changed := false
 
 	// Add type if missing and inferable
@@ -406,14 +406,14 @@ func coerceMinimal(obj map[string]interface{}, path string, report *Report, opts
 		}
 
 		if props, ok := obj["properties"]; ok {
-			if propsMap, ok := props.(map[string]interface{}); ok {
+			if propsMap, ok := props.(map[string]any); ok {
 				if _, hasReq := obj["required"]; !hasReq {
 					keys := make([]string, 0, len(propsMap))
 					for k := range propsMap {
 						keys = append(keys, k)
 					}
 					sortStrings(keys)
-					reqArr := make([]interface{}, len(keys))
+					reqArr := make([]any, len(keys))
 					for i, k := range keys {
 						reqArr[i] = k
 					}
@@ -427,7 +427,7 @@ func coerceMinimal(obj map[string]interface{}, path string, report *Report, opts
 						Rule:     "add-required",
 					})
 				} else {
-					if reqArr, ok := obj["required"].([]interface{}); ok {
+					if reqArr, ok := obj["required"].([]any); ok {
 						reqKeys := make(map[string]bool)
 						for _, r := range reqArr {
 							if s, ok := r.(string); ok {
@@ -460,9 +460,9 @@ func coerceMinimal(obj map[string]interface{}, path string, report *Report, opts
 
 	// Recurse
 	if props, ok := obj["properties"]; ok {
-		if propsMap, ok := props.(map[string]interface{}); ok {
+		if propsMap, ok := props.(map[string]any); ok {
 			for name, propSchema := range propsMap {
-				if propObj, ok := propSchema.(map[string]interface{}); ok {
+				if propObj, ok := propSchema.(map[string]any); ok {
 					if coerceMinimal(propObj, path+"/properties/"+name, report, opts) {
 						changed = true
 					}
@@ -471,7 +471,7 @@ func coerceMinimal(obj map[string]interface{}, path string, report *Report, opts
 		}
 	}
 	if items, ok := obj["items"]; ok {
-		if itemsObj, ok := items.(map[string]interface{}); ok {
+		if itemsObj, ok := items.(map[string]any); ok {
 			if coerceMinimal(itemsObj, path+"/items", report, opts) {
 				changed = true
 			}

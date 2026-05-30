@@ -24,19 +24,19 @@ const maxTraversalBudget = 100000 // Maximum nodes to visit to prevent DoS
 
 // traverseContext holds state for a single traversal.
 type traverseContext struct {
-	defs      map[string]interface{}
+	defs      map[string]any
 	visited   map[string]bool // for cycle detection on $ref
 	metrics   SchemaMetrics
 	nodeCount int
 }
 
-func newTraverseContext(candidateMap map[string]interface{}) *traverseContext {
+func newTraverseContext(candidateMap map[string]any) *traverseContext {
 	ctx := &traverseContext{
 		visited: make(map[string]bool),
 	}
 	// Extract $defs if present
 	if defs, ok := candidateMap["$defs"]; ok {
-		if defsMap, ok := defs.(map[string]interface{}); ok {
+		if defsMap, ok := defs.(map[string]any); ok {
 			ctx.defs = defsMap
 			// Count string budget from $defs names
 			for name := range defsMap {
@@ -48,13 +48,13 @@ func newTraverseContext(candidateMap map[string]interface{}) *traverseContext {
 }
 
 // traverseSchema walks the schema graph, computing metrics and following $refs.
-func (ctx *traverseContext) traverseSchema(node interface{}, path string, depth int) {
+func (ctx *traverseContext) traverseSchema(node any, path string, depth int) {
 	ctx.nodeCount++
 	if ctx.nodeCount > maxTraversalBudget {
 		return
 	}
 
-	obj, ok := node.(map[string]interface{})
+	obj, ok := node.(map[string]any)
 	if !ok {
 		return
 	}
@@ -74,7 +74,7 @@ func (ctx *traverseContext) traverseSchema(node interface{}, path string, depth 
 
 	// Count properties and string budget
 	if props, ok := obj["properties"]; ok {
-		if propsMap, ok := props.(map[string]interface{}); ok {
+		if propsMap, ok := props.(map[string]any); ok {
 			ctx.metrics.TotalProperties += len(propsMap)
 			for name, propSchema := range propsMap {
 				ctx.metrics.StringBudget += len(name)
@@ -90,7 +90,7 @@ func (ctx *traverseContext) traverseSchema(node interface{}, path string, depth 
 
 	// Count enum values and string budget
 	if enumVal, ok := obj["enum"]; ok {
-		if enumArr, ok := enumVal.([]interface{}); ok {
+		if enumArr, ok := enumVal.([]any); ok {
 			ctx.metrics.TotalEnumValues += len(enumArr)
 			totalStr := 0
 			for _, v := range enumArr {
@@ -123,7 +123,7 @@ func (ctx *traverseContext) traverseSchema(node interface{}, path string, depth 
 
 	// Traverse prefixItems
 	if prefixItems, ok := obj["prefixItems"]; ok {
-		if arr, ok := prefixItems.([]interface{}); ok {
+		if arr, ok := prefixItems.([]any); ok {
 			for i, item := range arr {
 				ctx.traverseSchema(item, fmt.Sprintf("%s/prefixItems/%d", path, i), depth)
 			}
@@ -132,7 +132,7 @@ func (ctx *traverseContext) traverseSchema(node interface{}, path string, depth 
 
 	// Traverse anyOf
 	if anyOf, ok := obj["anyOf"]; ok {
-		if arr, ok := anyOf.([]interface{}); ok {
+		if arr, ok := anyOf.([]any); ok {
 			for i, item := range arr {
 				ctx.traverseSchema(item, fmt.Sprintf("%s/anyOf/%d", path, i), depth)
 			}
@@ -141,7 +141,7 @@ func (ctx *traverseContext) traverseSchema(node interface{}, path string, depth 
 
 	// Traverse $defs (for completeness, but they are traversed via $ref)
 	if defs, ok := obj["$defs"]; ok {
-		if defsMap, ok := defs.(map[string]interface{}); ok {
+		if defsMap, ok := defs.(map[string]any); ok {
 			for name, defSchema := range defsMap {
 				ctx.traverseSchema(defSchema, path+"/$defs/"+name, depth)
 			}
@@ -150,7 +150,7 @@ func (ctx *traverseContext) traverseSchema(node interface{}, path string, depth 
 
 	// Traverse additionalProperties if it's a schema (not boolean)
 	if ap, ok := obj["additionalProperties"]; ok {
-		if apMap, ok := ap.(map[string]interface{}); ok {
+		if apMap, ok := ap.(map[string]any); ok {
 			ctx.traverseSchema(apMap, path+"/additionalProperties", depth)
 		}
 	}
@@ -194,8 +194,8 @@ func (ctx *traverseContext) resolveAndTraverse(ref string, path string, depth in
 }
 
 // isObjectType returns true if the schema node declares type: object or type: ["object", ...].
-func isObjectType(node interface{}) bool {
-	obj, ok := node.(map[string]interface{})
+func isObjectType(node any) bool {
+	obj, ok := node.(map[string]any)
 	if !ok {
 		return false
 	}
@@ -206,7 +206,7 @@ func isObjectType(node interface{}) bool {
 	switch tv := t.(type) {
 	case string:
 		return tv == "object"
-	case []interface{}:
+	case []any:
 		for _, v := range tv {
 			if s, ok := v.(string); ok && s == "object" {
 				return true
@@ -217,8 +217,8 @@ func isObjectType(node interface{}) bool {
 }
 
 // isArrayType returns true if the schema node declares type: array or type: ["array", ...].
-func isArrayType(node interface{}) bool {
-	obj, ok := node.(map[string]interface{})
+func isArrayType(node any) bool {
+	obj, ok := node.(map[string]any)
 	if !ok {
 		return false
 	}
@@ -229,7 +229,7 @@ func isArrayType(node interface{}) bool {
 	switch tv := t.(type) {
 	case string:
 		return tv == "array"
-	case []interface{}:
+	case []any:
 		for _, v := range tv {
 			if s, ok := v.(string); ok && s == "array" {
 				return true
