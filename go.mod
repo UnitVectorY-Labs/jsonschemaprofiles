@@ -4,6 +4,6 @@ go 1.26.0 // GOVERSION
 
 require (
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
-	golang.org/x/text v0.38.0
+	golang.org/x/text v0.39.0
 	gopkg.in/yaml.v3 v3.0.1
 )
