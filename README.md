@@ -61,6 +61,10 @@ jsonschemaprofiles validate schema --profile OPENAI_202602 --in schema.json
 
 # Coerce
 jsonschemaprofiles coerce schema --profile OPENAI_202602 --in schema.json --out fixed.json
+
+# Version
+jsonschemaprofiles version
+# jsonschemaprofiles version vX.Y.Z (goX.Y.Z, os/arch)
 ```
 
 ## Available Profiles
