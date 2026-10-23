@@ -11,3 +11,4 @@ config:
   docs:
     enabled: true
     domain: jsonschemaprofiles.unitvectorylabs.com
+  osv: sarif
