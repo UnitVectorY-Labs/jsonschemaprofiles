@@ -1,7 +1,8 @@
 package engine
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"sort"
 	"strings"
@@ -78,7 +79,7 @@ func (r *Report) Sort() {
 // JSON returns the JSON encoding of the report.
 func (r *Report) JSON() ([]byte, error) {
 	r.Sort()
-	return json.MarshalIndent(r, "", "  ")
+	return json.Marshal(r, jsontext.WithIndent("  "))
 }
 
 // Text returns a human-friendly text representation.

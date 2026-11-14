@@ -163,7 +163,7 @@ type ValidateOptions struct {
 
 #### `func ValidateSchema(profileID ProfileID, schemaBytes []byte, opts *ValidateOptions) (*Report, error)`
 
-Validates a candidate schema against a profile and returns a `Report`.
+Validates a candidate schema against a profile and returns a `Report`. Input must be valid UTF-8 JSON with no duplicate object member names; invalid input returns an error.
 
 ### Coercion
 
@@ -186,7 +186,7 @@ type CoerceOptions struct {
 
 #### `func CoerceSchema(profileID ProfileID, schemaBytes []byte, opts *CoerceOptions) ([]byte, *Report, bool, error)`
 
-Attempts profile-specific schema coercion.
+Attempts profile-specific schema coercion. Like validation, coercion rejects invalid UTF-8 and duplicate JSON object member names.
 
 Return values:
 
@@ -196,6 +196,8 @@ Return values:
 4. Error.
 
 ### Reporting
+
+JSON reports encode nil findings as an empty array. JSON output does not escape HTML characters such as `<` and `>`.
 
 #### `type Severity string`
 
