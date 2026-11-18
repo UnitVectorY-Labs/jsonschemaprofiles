@@ -1,7 +1,8 @@
 package engine
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"sort"
 )
@@ -84,7 +85,7 @@ func CoerceSchema(profileID string, schemaFile string, metaSchemaYAML []byte, sc
 	}
 
 	// Serialize the coerced schema
-	out, err := json.MarshalIndent(schema, "", "  ")
+	out, err := json.Marshal(schema, jsontext.WithIndent("  "), json.Deterministic(true))
 	if err != nil {
 		return nil, nil, false, fmt.Errorf("failed to serialize coerced schema: %w", err)
 	}
