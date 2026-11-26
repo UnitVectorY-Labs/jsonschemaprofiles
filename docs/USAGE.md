@@ -28,7 +28,7 @@ jsonschemaprofiles profiles list
 
 ### `validate schema`
 
-Validate a candidate JSON Schema against a profile (Phase 1 + Phase 2).
+Validate a candidate JSON Schema against a profile (Phase 1 + Phase 2). Validation and coercion reject JSON containing duplicate object member names or invalid UTF-8.
 
 ```bash
 jsonschemaprofiles validate schema --profile OPENAI_202602 --in schema.json
